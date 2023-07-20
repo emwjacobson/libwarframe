@@ -1,2 +1,6 @@
+#ifndef WARFRAME__H
+#define WARFRAME__H
 
-int hello_world();
+int test();
+
+#endif

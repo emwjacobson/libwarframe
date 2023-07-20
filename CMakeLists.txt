@@ -1,20 +1,33 @@
-cmake_minimum_required(VERSION 3.0)
-project(warframe VERSION 0.0.1)
-
-add_library(${PROJECT_NAME} SHARED
-  src/warframe.c
+cmake_minimum_required(VERSION 3.17)
+project(warframe
+  VERSION 0.0.1
+  LANGUAGES C
 )
 
+# Create this project as a library
+add_library(${PROJECT_NAME} SHARED
+  src/warframe.c
+
+  include/warframe.h
+)
+
+# Set version and public header
 set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION 1
   PUBLIC_HEADER include/warframe.h
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+# Include directory
+target_include_directories(${PROJECT_NAME} PUBLIC
   include/
-  src/
 )
+
+add_subdirectory(lib/curl)
+add_subdirectory(lib/cJSON)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/cJSON)
+target_link_libraries(${PROJECT_NAME} libcurl cjson)
+
 
 #include(GNUInstallDirs)
 #configure_file(warframe.pc.in warframe.pc @ONLY)
