@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.0)
+project(warframe VERSION 0.0.1)
+
+add_library(${PROJECT_NAME} SHARED
+  src/warframe.c
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  VERSION ${PROJECT_VERSION}
+  SOVERSION 1
+  PUBLIC_HEADER include/warframe.h
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  include/
+  src/
+)
+
+#include(GNUInstallDirs)
+#configure_file(warframe.pc.in warframe.pc @ONLY)
+#install(TARGETS ${PROJECT_NAME}
+#  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+#)
+#install(FILES ${CMAKE_BINARY_DIR}/warframe.pc
+#  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR/pkgconfig
+#)
