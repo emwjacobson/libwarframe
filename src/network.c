@@ -51,8 +51,14 @@ bool network_init(char *url) {
   return true;
 }
 
-void make_request(char *endpoint) {
-  if (!network_initialized || curl == NULL) return;
+/**
+ * @brief Makes a GET request to `endpoint`
+ * 
+ * @param endpoint The endpoint to make the request to
+ * @return cJSON* A JSON object. User is responsible for deallocating with cJSON_Delete()
+ */
+cJSON *make_get_request(char *endpoint) {
+  if (!network_initialized || curl == NULL) return NULL;
 
   curl_data chunk = {0};
 
@@ -60,6 +66,7 @@ void make_request(char *endpoint) {
   strncat(constructed_url, wfm_url, URL_MAX_LENGTH);
   strncat(constructed_url, endpoint, 64);
 
+  curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(curl, CURLOPT_URL, constructed_url);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 
@@ -68,8 +75,9 @@ void make_request(char *endpoint) {
   long res_code;
   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res_code);
 
-  printf("Response Code: %li\n", res_code);
-  printf("Data Size: %li\n", chunk.size);
+  cJSON *json = cJSON_ParseWithLength(chunk.response, chunk.size);
+
+  return json;
 }
 
 void network_cleanup() {

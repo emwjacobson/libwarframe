@@ -5,3 +5,9 @@ This project is just an API intended to interact with the respective service's A
 # libwarframe
 
 More information to come once I flesh the project out more :)
+
+
+## Thoughts and Ideas
+
+ - [ ] Cache mechanism to prevent strain on APIs
+ - [ ] Ability to log in to WFmarket

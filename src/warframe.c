@@ -3,6 +3,7 @@
 #include<stdint.h>
 #include<stdio.h>
 #include<cJSON.h>
+#include<malloc.h>
 
 
 static bool wfm_initialized = false;
@@ -22,7 +23,20 @@ bool wfm_init(wf_config cfg_in) {
 }
 
 void wfm_get_items() {
-  make_request("/items");
+  cJSON *data = make_get_request("/items");
+
+  if (data == NULL) {
+    printf ("Error making request.");
+    return;
+  }
+
+  char *string = cJSON_Print(data);
+
+  printf("%s", string);
+
+  free(string);
+
+  cJSON_Delete(data);
 }
 
 void wfm_cleanup() {
