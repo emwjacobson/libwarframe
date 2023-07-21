@@ -9,7 +9,7 @@
 static bool wfm_initialized = false;
 
 
-bool wfm_init(wf_config cfg_in) {
+bool wfm_init(wfm_config cfg_in) {
   if (wfm_initialized) return true;
 
   bool res;

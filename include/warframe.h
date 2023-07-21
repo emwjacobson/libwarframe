@@ -3,18 +3,19 @@
 
 #include<stdbool.h>
 
-typedef struct wf_config {
+typedef struct wfm_config {
     char wfm_url[64];
-} wf_config;
+} wfm_config;
 
 #define DEFAULT_CONFIG { \
         .wfm_url="https://api.warframe.market/v1" \
     }
 
-bool wfm_init(wf_config config);
-
+bool wfm_init(wfm_config config);
 void wfm_get_items();
-
 void wfm_cleanup();
+
+bool wf_init();
+void wf_cleanup();
 
 #endif

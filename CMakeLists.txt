@@ -6,7 +6,7 @@ project(warframe
 
 # Create this project as a library
 add_library(${PROJECT_NAME} SHARED
-  src/warframe.c
+  src/wfm.c
   src/network.c
 
   include/warframe.h
@@ -24,6 +24,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_include_directories(${PROJECT_NAME} PUBLIC
   include/
 )
+
+
+set(BUILD_CURL_EXE OFF)
 
 add_subdirectory(lib/curl)
 add_subdirectory(lib/cJSON)
