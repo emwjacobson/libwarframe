@@ -9,6 +9,7 @@
 
 static bool network_initialized = false;
 static CURL *curl = NULL;
+static int references = 0;
 
 typedef struct curl_data
 {
@@ -36,8 +37,10 @@ static size_t write_callback(char *data, size_t size, size_t nmemb, void *userda
 
 bool network_init()
 {
-  if (network_initialized)
+  if (network_initialized) {
+    references++;
     return true;
+  }
 
   curl = curl_easy_init();
   if (curl == NULL)
@@ -46,6 +49,7 @@ bool network_init()
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
   network_initialized = true;
+  references = 1;
 
   return true;
 }
@@ -83,5 +87,7 @@ cJSON *make_get_request(char *url, char *endpoint)
 
 void network_cleanup()
 {
-  curl_easy_cleanup(curl);
+  references--;
+  if (references == 0)
+    curl_easy_cleanup(curl);
 }

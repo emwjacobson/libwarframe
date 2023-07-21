@@ -6,9 +6,13 @@
 static bool wf_initialized = false;
 wf_config wf_cfg = {0};
 
+bool is_wf_initialized() {
+  return wf_initialized;
+}
+
 bool wf_init(wf_config *config)
 {
-  if (wf_initialized)
+  if (is_wf_initialized())
     return true;
 
   // Copy config in
@@ -25,4 +29,8 @@ bool wf_init(wf_config *config)
 
 void wf_cleanup()
 {
+  if (!is_wf_initialized()) return;
+  
+  network_cleanup();
+  wf_initialized = false;
 }
