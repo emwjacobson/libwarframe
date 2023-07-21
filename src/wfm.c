@@ -4,17 +4,22 @@
 #include<stdio.h>
 #include<cJSON.h>
 #include<malloc.h>
+#include<string.h>
 
 
 static bool wfm_initialized = false;
+wfm_config wfm_cfg = {0};
 
 
-bool wfm_init(wfm_config cfg_in) {
+bool wfm_init(wfm_config *cfg_in) {
   if (wfm_initialized) return true;
+
+  // Copy config in
+  memcpy(&wfm_cfg, cfg_in, sizeof(wfm_config));
 
   bool res;
 
-  res = network_init(cfg_in.wfm_url);
+  res = network_init();
   if (!res) return false;
 
   wfm_initialized = true;
@@ -23,7 +28,7 @@ bool wfm_init(wfm_config cfg_in) {
 }
 
 void wfm_get_items() {
-  cJSON *data = make_get_request("/items");
+  cJSON *data = make_get_request(wfm_cfg.wfm_url, "/items");
 
   if (data == NULL) {
     printf ("Error making request.");

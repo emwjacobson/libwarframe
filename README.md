@@ -18,3 +18,4 @@ More information to come once I flesh the project out more :)
    - [ ] https://lexbor.com/docs/lexbor/html/
    - [ ] https://content.warframe.com/dynamic/worldState.php
    - [ ] https://n8k6e2y6.ssl.hwcdn.net/repos/hnfvc0o3jnfvc873njb03enrf56.html
+ - [ ] Add helper function to quickly check if module was initialized

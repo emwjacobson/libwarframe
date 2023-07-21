@@ -3,10 +3,11 @@
 
 #include<stdbool.h>
 #include<cJSON.h>
+#include "warframe.h"
 
-bool network_init(char *url);
+bool network_init();
 
-cJSON *make_get_request(char *endpoint);
+cJSON *make_get_request(char *url, char *endpoint);
 
 void network_cleanup();
 

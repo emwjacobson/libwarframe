@@ -1,26 +1,24 @@
 #include "network.h"
+#include "warframe.h"
 
-#include<stdint.h>
-#include<malloc.h>
-#include<stdio.h>
-#include<string.h>
-#include<curl/curl.h>
-
-
-#define URL_MAX_LENGTH 64
+#include <stdint.h>
+#include <malloc.h>
+#include <stdio.h>
+#include <string.h>
+#include <curl/curl.h>
 
 static bool network_initialized = false;
 static CURL *curl = NULL;
-static char wfm_url[URL_MAX_LENGTH];
 
-
-typedef struct curl_data {
+typedef struct curl_data
+{
   char *response;
   size_t size;
 } curl_data;
 
 // https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html
-static size_t write_callback(char *data, size_t size, size_t nmemb, void *userdata) {
+static size_t write_callback(char *data, size_t size, size_t nmemb, void *userdata)
+{
   size_t realsize = size * nmemb;
   struct curl_data *mem = (struct curl_data *)userdata;
 
@@ -36,13 +34,14 @@ static size_t write_callback(char *data, size_t size, size_t nmemb, void *userda
   return realsize;
 }
 
+bool network_init()
+{
+  if (network_initialized)
+    return true;
 
-bool network_init(char *url) {
-  if (network_initialized) return true;
-
-  strncpy(wfm_url, url, URL_MAX_LENGTH);
   curl = curl_easy_init();
-  if (curl == NULL) return false;
+  if (curl == NULL)
+    return false;
 
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
@@ -53,18 +52,20 @@ bool network_init(char *url) {
 
 /**
  * @brief Makes a GET request to `endpoint`
- * 
+ *
  * @param endpoint The endpoint to make the request to
  * @return cJSON* A JSON object. User is responsible for deallocating with cJSON_Delete()
  */
-cJSON *make_get_request(char *endpoint) {
-  if (!network_initialized || curl == NULL) return NULL;
+cJSON *make_get_request(char *url, char *endpoint)
+{
+  if (!network_initialized || curl == NULL)
+    return NULL;
 
   curl_data chunk = {0};
 
-  char constructed_url[URL_MAX_LENGTH + 64];
-  strncat(constructed_url, wfm_url, URL_MAX_LENGTH);
-  strncat(constructed_url, endpoint, 64);
+  char constructed_url[URL_MAX_LENGTH + ENDPOINT_MAX_LENGTH];
+  strncat(constructed_url, url, URL_MAX_LENGTH);
+  strncat(constructed_url, endpoint, ENDPOINT_MAX_LENGTH);
 
   curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(curl, CURLOPT_URL, constructed_url);
@@ -80,6 +81,7 @@ cJSON *make_get_request(char *endpoint) {
   return json;
 }
 
-void network_cleanup() {
+void network_cleanup()
+{
   curl_easy_cleanup(curl);
 }

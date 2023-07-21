@@ -7,6 +7,7 @@ project(warframe
 # Create this project as a library
 add_library(${PROJECT_NAME} SHARED
   src/wfm.c
+  src/wf.c
   src/network.c
 
   include/warframe.h
