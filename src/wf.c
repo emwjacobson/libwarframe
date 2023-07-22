@@ -9,6 +9,27 @@
 static bool wf_initialized = false;
 wf_config wf_cfg = {0};
 
+// Export URLs
+typedef struct wf_content {
+  char Customs[ENDPOINT_MAX_LENGTH];
+  char Drones[ENDPOINT_MAX_LENGTH];
+  char Flavour[ENDPOINT_MAX_LENGTH];
+  char FusionBundles[ENDPOINT_MAX_LENGTH];
+  char Gear[ENDPOINT_MAX_LENGTH];
+  char Keys[ENDPOINT_MAX_LENGTH];
+  char Recipes[ENDPOINT_MAX_LENGTH];
+  char Regions[ENDPOINT_MAX_LENGTH];
+  char RelicArcane[ENDPOINT_MAX_LENGTH];
+  char Resources[ENDPOINT_MAX_LENGTH];
+  char Sentinels[ENDPOINT_MAX_LENGTH];
+  char SortieRewards[ENDPOINT_MAX_LENGTH];
+  char Upgrades[ENDPOINT_MAX_LENGTH];
+  char Warframes[ENDPOINT_MAX_LENGTH];
+  char Weapons[ENDPOINT_MAX_LENGTH];
+  char Manifest[ENDPOINT_MAX_LENGTH];
+} wf_content;
+static wf_content content_endpoints = {0};
+
 bool is_wf_initialized() {
   return wf_initialized;
 }
@@ -22,20 +43,66 @@ void wf_get_pe_index() {
 
   curl_data *data = make_GET_Raw(wf_cfg.wf_pe_url, "");
 
-  printf("Size: %li\n", data->size);
-
-  size_t decoded_len = 2 * data->size;
-  char *decoded = malloc(decoded_len);
+  size_t out_len = 2 * data->size; // This should be enough?
+  char *decoded = malloc(out_len);
   ELzmaStatus status;
   size_t in_size = data->size - 13;
-  SRes res = LzmaDecode(decoded, &decoded_len, &data->response[13], &in_size, 
+  SRes res = LzmaDecode(decoded, &out_len, &data->response[13], &in_size, 
     data->response, LZMA_PROPS_SIZE, LZMA_FINISH_ANY, 
     &status, &alloc);
 
-  printf("Res: %i\n", res);
-  printf("Output size: %li\n", decoded_len);
-  printf("Decoded:\n%s\n", decoded);
+  FILE *f = fmemopen(decoded, out_len, "r");
 
+  char *line = NULL;
+  size_t len = 0;
+  size_t read;
+  while ((read = getline(&line, &len, f)) != -1) {
+    char *tmp_str = malloc(read);
+    strncpy(tmp_str, line, read);
+    char *ctnt_type = strtok(tmp_str, "_");
+
+    char *ref = NULL;
+    if (strncmp(ctnt_type, "ExportCustoms", sizeof("ExportCustoms")) == 0) {
+      ref = content_endpoints.Customs;
+    } else if (strncmp(ctnt_type, "ExportDrones", sizeof("ExportDrones")) == 0) {
+      ref = content_endpoints.Drones;
+    } else if (strncmp(ctnt_type, "ExportFlavour", sizeof("ExportFlavour")) == 0) {
+      ref = content_endpoints.Flavour;
+    } else if (strncmp(ctnt_type, "ExportFusionBundles", sizeof("ExportFusionBundles")) == 0) {
+      ref = content_endpoints.FusionBundles;
+    } else if (strncmp(ctnt_type, "ExportGear", sizeof("ExportGear")) == 0) {
+      ref = content_endpoints.Gear;
+    } else if (strncmp(ctnt_type, "ExportKeys", sizeof("ExportKeys")) == 0) {
+      ref = content_endpoints.Keys;
+    } else if (strncmp(ctnt_type, "ExportRecipes", sizeof("ExportRecipes")) == 0) {
+      ref = content_endpoints.Recipes;
+    } else if (strncmp(ctnt_type, "ExportRegions", sizeof("ExportRegions")) == 0) {
+      ref = content_endpoints.Regions;
+    } else if (strncmp(ctnt_type, "ExportRelicArcane", sizeof("ExportRelicArcane")) == 0) {
+      ref = content_endpoints.RelicArcane;
+    } else if (strncmp(ctnt_type, "ExportResources", sizeof("ExportResources")) == 0) {
+      ref = content_endpoints.Resources;
+    } else if (strncmp(ctnt_type, "ExportSentinels", sizeof("ExportSentinels")) == 0) {
+      ref = content_endpoints.Sentinels;
+    } else if (strncmp(ctnt_type, "ExportSortieRewards", sizeof("ExportSortieRewards")) == 0) {
+      ref = content_endpoints.SortieRewards;
+    } else if (strncmp(ctnt_type, "ExportUpgrades", sizeof("ExportUpgrades")) == 0) {
+      ref = content_endpoints.Upgrades;
+    } else if (strncmp(ctnt_type, "ExportWarframes", sizeof("WExportarframes")) == 0) {
+      ref = content_endpoints.Warframes;
+    } else if (strncmp(ctnt_type, "ExportWeapons", sizeof("ExportWeapons")) == 0) {
+      ref = content_endpoints.Weapons;
+    } else {
+      ctnt_type = strtok(ctnt_type, ".");
+      if (strncmp(ctnt_type, "ExportManifest", sizeof("ExportManifest")) == 0) {
+        ref = content_endpoints.Manifest;
+      }
+    }
+
+    strncpy(ref, strtok(line, "\n"), read);
+  }
+
+  free(line);
   free(decoded);
 }
 
@@ -95,6 +162,8 @@ worldstate *wf_get_worldstate() {
   get_string(data, &(ws->BuildLabel), "BuildLabel");
   get_number(data, &(ws->Time), "Time");
   // TODO: "Tmp" variable?
+
+  // TODO: Finish parsing JSON
 
   /**
    * Events
