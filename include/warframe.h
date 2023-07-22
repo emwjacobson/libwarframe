@@ -2,12 +2,13 @@
 #define WARFRAME__H
 
 #include <stdbool.h>
+#include "worldstate.h"
 
 #define URL_MAX_LENGTH 128
 #define ENDPOINT_MAX_LENGTH 64
 
 /**
- * Warframe Marker API
+ * Warframe Market API
  */
 
 typedef struct wfm_config
@@ -41,6 +42,8 @@ typedef struct wf_config
   }
 
 bool wf_init(wf_config *config);
+worldstate *wf_get_worldstate();
+void wf_free_worldstate();
 void wf_cleanup();
 
 #endif

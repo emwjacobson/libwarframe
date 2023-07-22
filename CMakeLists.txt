@@ -12,6 +12,7 @@ add_library(${PROJECT_NAME} SHARED
 
   include/warframe.h
   include/network.h
+  include/worldstate.h
 )
 
 # Set version and public header
