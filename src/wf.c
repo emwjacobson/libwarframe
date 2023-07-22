@@ -12,6 +12,14 @@ bool is_wf_initialized() {
   return wf_initialized;
 }
 
+void wf_get_pe_index() {
+  if (!is_wf_initialized) return;
+
+  curl_data *data = make_GET_Raw(wf_cfg.wf_pe_url, "");
+
+  printf("Size: %li\n", data->size);
+}
+
 bool wf_init(wf_config *config)
 {
   if (is_wf_initialized())
@@ -23,6 +31,8 @@ bool wf_init(wf_config *config)
   bool res = network_init();
   if (!res)
     return false;
+
+  wf_get_pe_index();
 
   wf_initialized = true;
 
@@ -48,7 +58,7 @@ void get_number(cJSON *data, int *ref, char* name) {
 worldstate *wf_get_worldstate() {
   if (!is_wf_initialized) return NULL;
 
-  cJSON *data = make_get_request(wf_cfg.wf_ws_url, "");
+  cJSON *data = make_GET_JSON(wf_cfg.wf_ws_url, "");
 
   if (data == NULL) {
     printf("Error getting world state\n");

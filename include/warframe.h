@@ -32,13 +32,15 @@ void wfm_cleanup();
 typedef struct wf_config
 {
   char wf_ws_url[URL_MAX_LENGTH]; // World State URL
-  char wf_dt_url[URL_MAX_LENGTH];
+  char wf_dt_url[URL_MAX_LENGTH]; // Drop Table URL
+  char wf_pe_url[URL_MAX_LENGTH]; // Public Export URL
 } wf_config;
 
-#define WF_DEFAULT_CONFIG                                                                \
-  {                                                                                      \
-    .wf_ws_url = "https://content.warframe.com/dynamic/worldState.php",                  \
-    .wf_dt_url = "https://n8k6e2y6.ssl.hwcdn.net/repos/hnfvc0o3jnfvc873njb03enrf56.html" \
+#define WF_DEFAULT_CONFIG                                                                 \
+  {                                                                                       \
+    .wf_ws_url = "https://content.warframe.com/dynamic/worldState.php",                   \
+    .wf_dt_url = "https://n8k6e2y6.ssl.hwcdn.net/repos/hnfvc0o3jnfvc873njb03enrf56.html", \
+    .wf_pe_url = "https://origin.warframe.com/PublicExport/index_en.txt.lzma"             \
   }
 
 bool wf_init(wf_config *config);

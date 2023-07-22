@@ -33,7 +33,7 @@ bool wfm_init(wfm_config *cfg_in) {
 void wfm_get_items() {
   if (!wfm_is_initialized()) return;
 
-  cJSON *data = make_get_request(wfm_cfg.wfm_url, "/items");
+  cJSON *data = make_GET_JSON(wfm_cfg.wfm_url, "/items");
 
   if (data == NULL) {
     printf ("Error making request.");

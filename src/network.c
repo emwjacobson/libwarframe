@@ -11,17 +11,11 @@ static bool network_initialized = false;
 static CURL *curl = NULL;
 static int references = 0;
 
-typedef struct curl_data
-{
-  char *response;
-  size_t size;
-} curl_data;
-
 // https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html
 static size_t write_callback(char *data, size_t size, size_t nmemb, void *userdata)
 {
   size_t realsize = size * nmemb;
-  struct curl_data *mem = (struct curl_data *)userdata;
+  curl_data *mem = (curl_data *)userdata;
 
   char *ptr = realloc(mem->response, mem->size + realsize + 1);
   if (ptr == NULL)
@@ -56,16 +50,18 @@ bool network_init()
 
 /**
  * @brief Makes a GET request to `endpoint`
- *
- * @param endpoint The endpoint to make the request to
- * @return cJSON* A JSON object. User is responsible for deallocating with cJSON_Delete()
+ * 
+ * @param url The URL to make a request to
+ * @param endpoint The endpoint to make a request to
+ * @return curl_data* The raw `curl_data`. User is responsible for deallocating with `free()`
  */
-cJSON *make_get_request(char *url, char *endpoint)
-{
+curl_data *make_GET_Raw(char *url, char *endpoint) {
   if (!network_initialized || curl == NULL)
     return NULL;
 
-  curl_data chunk = {0};
+  curl_data *chunk = (curl_data *)malloc(sizeof(curl_data));
+  if (chunk == NULL) return NULL;
+  memset(chunk, 0, sizeof(curl_data));
 
   char constructed_url[URL_MAX_LENGTH + ENDPOINT_MAX_LENGTH];
   strncat(constructed_url, url, URL_MAX_LENGTH);
@@ -73,14 +69,34 @@ cJSON *make_get_request(char *url, char *endpoint)
 
   curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(curl, CURLOPT_URL, constructed_url);
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)chunk);
 
   curl_easy_perform(curl);
 
-  long res_code;
-  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res_code);
+  return chunk;
+}
 
-  cJSON *json = cJSON_ParseWithLength(chunk.response, chunk.size);
+/**
+ * @brief Makes a GET request to `endpoint`
+ *
+ * @param url The base URL to make a request to
+ * @param endpoint The endpoint to make the request to
+ * @return cJSON* A JSON object. User is responsible for deallocating with `cJSON_Delete()`
+ */
+cJSON *make_GET_JSON(char *url, char *endpoint)
+{
+  if (!network_initialized || curl == NULL)
+    return NULL;
+
+  curl_data *chunk = make_GET_Raw(url, endpoint);
+  if (chunk == NULL) {
+    printf("Problem making request.\n");
+    return NULL;
+  }
+
+  cJSON *json = cJSON_ParseWithLength(chunk->response, chunk->size);
+
+  free(chunk);
 
   return json;
 }
