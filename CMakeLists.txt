@@ -32,8 +32,9 @@ set(BUILD_CURL_EXE OFF)
 
 add_subdirectory(lib/curl)
 add_subdirectory(lib/cJSON)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/cJSON)
-target_link_libraries(${PROJECT_NAME} libcurl cjson)
+  target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/cJSON)
+add_subdirectory(lib/lzma)
+target_link_libraries(${PROJECT_NAME} libcurl cjson lzma)
 
 
 #include(GNUInstallDirs)

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <LzmaDec.h>
 
 static bool wf_initialized = false;
 wf_config wf_cfg = {0};
@@ -12,12 +13,30 @@ bool is_wf_initialized() {
   return wf_initialized;
 }
 
+void *SzAlloc(const ISzAlloc *p, size_t size) { p = p; return malloc(size); }
+void SzFree(const ISzAlloc *p, void *address) { p = p; free(address); }
+static ISzAlloc alloc = { SzAlloc, SzFree };
+
 void wf_get_pe_index() {
   if (!is_wf_initialized) return;
 
   curl_data *data = make_GET_Raw(wf_cfg.wf_pe_url, "");
 
   printf("Size: %li\n", data->size);
+
+  size_t decoded_len = 2 * data->size;
+  char *decoded = malloc(decoded_len);
+  ELzmaStatus status;
+  size_t in_size = data->size - 13;
+  SRes res = LzmaDecode(decoded, &decoded_len, &data->response[13], &in_size, 
+    data->response, LZMA_PROPS_SIZE, LZMA_FINISH_ANY, 
+    &status, &alloc);
+
+  printf("Res: %i\n", res);
+  printf("Output size: %li\n", decoded_len);
+  printf("Decoded:\n%s\n", decoded);
+
+  free(decoded);
 }
 
 bool wf_init(wf_config *config)
