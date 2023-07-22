@@ -57,13 +57,148 @@ worldstate *wf_get_worldstate() {
 
   worldstate *ws = malloc(sizeof(worldstate));
 
-  cJSON *tmp;
-  int len;
+  /**
+   * Basic Data
+   */
   get_string(data, &(ws->WorldSeed), "WorldSeed");
   get_number(data, &(ws->Version), "Version");
   get_string(data, &(ws->MobileVersion), "MobileVersion");
   get_string(data, &(ws->BuildLabel), "BuildLabel");
   get_number(data, &(ws->Time), "Time");
+  // TODO: "Tmp" variable?
+
+  /**
+   * Events
+   */
+
+  /**
+   * Goals
+   */
+
+  /**
+   * Alerts
+   */
+
+  /**
+   * Sorties
+   */
+
+  /**
+   * LiteSorties
+   */
+
+  /**
+   * SyndicateMissions
+   */
+
+  /**
+   * ActiveMissions
+   */
+
+  /**
+   * GlobalUpgrades
+   */
+
+  /**
+   * FlashSales
+   */
+  
+  /**
+   * InGameMarket
+   */
+
+  /**
+   * Invasions
+   */
+
+  /**
+   * HubEvents
+   */
+
+  /**
+   * NodeOverrides
+   */
+
+  /**
+   * VoidTraders
+   */
+
+  /**
+   * PrimeVaultTraders
+   */
+
+  /**
+   * VoidStorms
+   */
+
+  /**
+   * PrimeAccessAvailability
+   */
+
+  /**
+   * PrimeVaultAvailabilities
+   */
+
+  /**
+   * PrimeTokenAvailability
+   */
+
+  /**
+   * DailyDeals
+   */
+
+  /**
+   * LibraryInfo
+   */
+
+  /**
+   * PVPChallengeInstances
+   */
+
+  /**
+   * PersistentEnemies
+   */
+
+  /**
+   * PVPAlternativeModes
+   */
+
+  /**
+   * PVPActiveTournaments
+   */
+
+  /**
+   * ProjectPct
+   */
+
+  /**
+   * ConstructionProjects
+   */
+
+  /**
+   * TwitchPromos
+   */
+
+  /**
+   * ExperimentRecommended
+   */
+
+  /**
+   * EndlessXpChoices
+   */
+
+  /**
+   * ForceLogoutVersion
+   */
+
+  /**
+   * FeaturedGuilds
+   */
+
+  /**
+   * SeasonInfo
+   */
+
 
   cJSON_Delete(data);
   return ws;
