@@ -100,8 +100,10 @@ void wf_get_pe_index() {
     }
 
     strncpy(ref, strtok(line, "\n"), read);
+    free(tmp_str);
   }
 
+  free(data->response);
   free(data);
   free(line);
   free(decoded);
