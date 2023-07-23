@@ -53,7 +53,7 @@ bool network_init()
  * 
  * @param url The URL to make a request to
  * @param endpoint The endpoint to make a request to
- * @return curl_data* The raw `curl_data`. User is responsible for deallocating with `free()`
+ * @return curl_data* The raw `curl_data`. User is responsible for deallocating chunk.response and chunk with `free()`
  */
 curl_data *make_GET_Raw(char *url, char *endpoint) {
   if (!network_initialized || curl == NULL)
@@ -97,6 +97,7 @@ cJSON *make_GET_JSON(char *url, char *endpoint)
 
   cJSON *json = cJSON_ParseWithLength(chunk->response, chunk->size);
 
+  free(chunk->response);
   free(chunk);
 
   return json;
