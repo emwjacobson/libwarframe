@@ -9,6 +9,7 @@ typedef struct curl_data
 {
   char *response;
   size_t size;
+  long response_code;
 } curl_data;
 
 

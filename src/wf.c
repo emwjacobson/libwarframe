@@ -41,7 +41,7 @@ static ISzAlloc alloc = { SzAlloc, SzFree };
 void wf_get_pe_index() {
   if (!is_wf_initialized) return;
 
-  curl_data *data = make_GET_Raw(wf_cfg.wf_pe_url, "");
+  curl_data *data = make_GET_Raw(wf_cfg.wf_pe_index_url, "");
 
   size_t out_len = 2 * data->size; // This should be enough?
   char *decoded = malloc(out_len);
@@ -99,7 +99,8 @@ void wf_get_pe_index() {
       }
     }
 
-    strncpy(ref, strtok(line, "\n"), read);
+                 // Remove /r/n
+    strncpy(ref, strtok(strtok(line, "\r"), "\n"), read);
     free(tmp_str);
   }
 
@@ -310,6 +311,19 @@ void wf_free_worldstate(worldstate *ws) {
   free(ws->MobileVersion);
   free(ws->BuildLabel);
   free(ws);
+}
+
+void wf_get_warframes() {
+  if (!is_wf_initialized()) return;
+
+  cJSON *data = make_GET_JSON(wf_cfg.wf_pe_content_url, content_endpoints.Warframes);
+
+  char *string = cJSON_Print(data);
+
+  // TODO: Do something with the data :)
+
+  free(string);
+  cJSON_Delete(data);
 }
 
 void wf_cleanup()

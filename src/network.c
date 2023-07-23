@@ -66,13 +66,25 @@ curl_data *make_GET_Raw(char *url, char *endpoint) {
   char constructed_url[URL_MAX_LENGTH + ENDPOINT_MAX_LENGTH];
   memset(constructed_url, 0, URL_MAX_LENGTH + ENDPOINT_MAX_LENGTH);
   strncat(constructed_url, url, URL_MAX_LENGTH);
-  strncat(constructed_url, endpoint, ENDPOINT_MAX_LENGTH);
+  char *enc_endpoint = curl_easy_escape(curl, endpoint, strlen(endpoint));
+  strncat(constructed_url, enc_endpoint, ENDPOINT_MAX_LENGTH);
+  curl_free(enc_endpoint);
 
   curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
   curl_easy_setopt(curl, CURLOPT_URL, constructed_url);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)chunk);
 
-  curl_easy_perform(curl);
+  CURLcode res = curl_easy_perform(curl);
+
+  printf("%s\n%s\n", endpoint, constructed_url);
+
+  if (res != CURLE_OK) {
+    printf("Error making request: %i\n", res);
+    free(chunk);
+    return NULL;
+  }
+
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &(chunk->response_code));
 
   return chunk;
 }
@@ -94,8 +106,22 @@ cJSON *make_GET_JSON(char *url, char *endpoint)
     printf("Problem making request.\n");
     return NULL;
   }
+  if (chunk->response_code != 200) {
+    printf("Response code %li\n", chunk->response_code);
+    free(chunk->response);
+    free(chunk);
+    return NULL;
+  }
 
   cJSON *json = cJSON_ParseWithLength(chunk->response, chunk->size);
+
+  if (json == NULL) {
+    const char *err = cJSON_GetErrorPtr();
+    if (err != NULL)
+      printf("Error before: %s\n", err);
+    else
+      printf("??\n");
+  }
 
   free(chunk->response);
   free(chunk);
