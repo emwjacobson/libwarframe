@@ -64,6 +64,7 @@ curl_data *make_GET_Raw(char *url, char *endpoint) {
   memset(chunk, 0, sizeof(curl_data));
 
   char constructed_url[URL_MAX_LENGTH + ENDPOINT_MAX_LENGTH];
+  memset(constructed_url, 0, URL_MAX_LENGTH + ENDPOINT_MAX_LENGTH);
   strncat(constructed_url, url, URL_MAX_LENGTH);
   strncat(constructed_url, endpoint, ENDPOINT_MAX_LENGTH);
 

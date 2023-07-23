@@ -5,7 +5,7 @@ project(lzma
 )
 
 # Create this project as a library
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} STATIC
     LzmaDec.h
     7zTypes.h
 
