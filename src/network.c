@@ -74,12 +74,11 @@ curl_data *make_GET_Raw(char *url, char *endpoint) {
   curl_easy_setopt(curl, CURLOPT_URL, constructed_url);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)chunk);
 
+  PRINT_DEBUG("Making request to: %s\n", constructed_url);
   CURLcode res = curl_easy_perform(curl);
 
-  printf("%s\n%s\n", endpoint, constructed_url);
-
   if (res != CURLE_OK) {
-    printf("Error making request: %i\n", res);
+    PRINT_DEBUG("Error making request: %i\n", res);
     free(chunk);
     return NULL;
   }
@@ -103,11 +102,11 @@ cJSON *make_GET_JSON(char *url, char *endpoint)
 
   curl_data *chunk = make_GET_Raw(url, endpoint);
   if (chunk == NULL) {
-    printf("Problem making request.\n");
+    PRINT_DEBUG("Problem making JSON request\n");
     return NULL;
   }
   if (chunk->response_code != 200) {
-    printf("Response code %li\n", chunk->response_code);
+    PRINT_DEBUG("Got bad JSON response code %li\n", chunk->response_code);
     free(chunk->response);
     free(chunk);
     return NULL;
@@ -118,9 +117,7 @@ cJSON *make_GET_JSON(char *url, char *endpoint)
   if (json == NULL) {
     const char *err = cJSON_GetErrorPtr();
     if (err != NULL)
-      printf("Error before: %s\n", err);
-    else
-      printf("??\n");
+      PRINT_DEBUG("Error parsing JSON before: %s\n", err);
   }
 
   free(chunk->response);

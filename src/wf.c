@@ -58,8 +58,6 @@ bool wf_get_pe_index() {
     return false;
   }
 
-  printf("Decoded: %s\n", decoded);
-
   FILE *f = fmemopen(decoded, out_len, "r");
 
   char *line = NULL;
@@ -150,7 +148,7 @@ bool wf_init(wf_config *config)
 void get_string(cJSON *data, char **ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (!cJSON_IsString(tmp)) {
-    printf("'%s' is not a string!\n", name);
+    PRINT_DEBUG("Parse error: '%s' is not a string!\n", name);
     return;
   }
   int len = strlen(tmp->valuestring);
@@ -169,7 +167,7 @@ worldstate *wf_get_worldstate() {
   cJSON *data = make_GET_JSON(wf_cfg.wf_ws_url, "");
 
   if (data == NULL) {
-    printf("Error getting world state\n");
+    PRINT_DEBUG("Error getting world state\n");
     return NULL;
   }
 

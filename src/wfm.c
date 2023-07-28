@@ -1,5 +1,6 @@
 #include "warframe.h"
 #include "network.h"
+#include "debug.h"
 #include<stdint.h>
 #include<stdio.h>
 #include<cJSON.h>
@@ -36,13 +37,13 @@ void wfm_get_items() {
   cJSON *data = make_GET_JSON(wfm_cfg.wfm_url, "/items");
 
   if (data == NULL) {
-    printf ("Error making request.");
+    PRINT_DEBUG("Error getting WFM items.\n");
     return;
   }
 
   char *string = cJSON_Print(data);
 
-  printf("%s", string);
+  // TODO: Finish this function :)
 
   free(string);
 
