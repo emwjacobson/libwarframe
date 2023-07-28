@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <LzmaDec.h>
+#include "debug.h"  
 
 static bool wf_initialized = false;
 wf_config wf_cfg = {0};
@@ -39,17 +40,22 @@ void SzFree(const ISzAlloc *p, void *address) { p = p; free(address); }
 static ISzAlloc alloc = { SzAlloc, SzFree };
 
 void wf_get_pe_index() {
-  if (!is_wf_initialized) return;
+  if (!is_wf_initialized()) return;
 
   curl_data *data = make_GET_Raw(wf_cfg.wf_pe_index_url, "");
 
   size_t out_len = 2 * data->size; // This should be enough?
-  char *decoded = malloc(out_len);
+  unsigned char *decoded = malloc(out_len);
   ELzmaStatus status;
   size_t in_size = data->size - 13;
   SRes res = LzmaDecode(decoded, &out_len, &data->response[13], &in_size, 
     data->response, LZMA_PROPS_SIZE, LZMA_FINISH_ANY, 
     &status, &alloc);
+
+  if (res != SZ_OK) {
+    PRINT_DEBUG("BAD RES VALUE LzmaDecode\n");
+    return;
+  }
 
   FILE *f = fmemopen(decoded, out_len, "r");
 
@@ -115,6 +121,8 @@ bool wf_init(wf_config *config)
   if (is_wf_initialized())
     return true;
 
+  PRINT_DEBUG("%s\n", "Hello");
+
   // Copy config in
   memcpy(&wf_cfg, config, sizeof(wf_config));
 
@@ -146,7 +154,7 @@ void get_number(cJSON *data, int *ref, char* name) {
 }
 
 worldstate *wf_get_worldstate() {
-  if (!is_wf_initialized) return NULL;
+  if (!is_wf_initialized()) return NULL;
 
   cJSON *data = make_GET_JSON(wf_cfg.wf_ws_url, "");
 

@@ -17,7 +17,7 @@ static size_t write_callback(char *data, size_t size, size_t nmemb, void *userda
   size_t realsize = size * nmemb;
   curl_data *mem = (curl_data *)userdata;
 
-  char *ptr = realloc(mem->response, mem->size + realsize + 1);
+  unsigned char *ptr = realloc(mem->response, mem->size + realsize + 1);
   if (ptr == NULL)
     return 0; // Out of memory
 
@@ -113,7 +113,7 @@ cJSON *make_GET_JSON(char *url, char *endpoint)
     return NULL;
   }
 
-  cJSON *json = cJSON_ParseWithLength(chunk->response, chunk->size);
+  cJSON *json = cJSON_ParseWithLength((char *)chunk->response, chunk->size);
 
   if (json == NULL) {
     const char *err = cJSON_GetErrorPtr();

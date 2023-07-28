@@ -21,4 +21,5 @@ More information to come once I flesh the project out more :)
    - [ ] https://warframe.fandom.com/wiki/Public_Export
      - https://github.com/lloyd/easylzma
  - [ ] Debug-only print statements
- - [ ] Static Libraries
+ - [ ] Better return values on errors
+ - [X] Static Libraries

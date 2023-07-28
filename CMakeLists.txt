@@ -4,6 +4,14 @@ project(warframe
   LANGUAGES C
 )
 
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_C_FLAGS "-Wall")
+set(CMAKE_C_FLAGS_DEBUG "-g")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
+
 # Create this project as a library
 add_library(${PROJECT_NAME} STATIC
   src/wfm.c
@@ -13,6 +21,7 @@ add_library(${PROJECT_NAME} STATIC
   include/warframe.h
   include/network.h
   include/worldstate.h
+  include/debug.h
 )
 
 # Set version and public header
@@ -27,21 +36,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   include/
 )
 
-set(BUILD_SHARED_AND_STATIC_LIBS ON)
+set(BUILD_SHARED_AND_STATIC_LIBS ON CACHE BOOL "Enable cJSON Static Library")
+set(ENABLE_CJSON_TEST OFF CACHE BOOL "Enable building cJSON test")
 
 find_package(CURL REQUIRED)
 add_subdirectory(lib/cJSON)
   target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/cJSON)
 add_subdirectory(lib/lzma)
 target_link_libraries(${PROJECT_NAME} curl cjson-static lzma)
-
-
-#include(GNUInstallDirs)
-#configure_file(warframe.pc.in warframe.pc @ONLY)
-#install(TARGETS ${PROJECT_NAME}
-#  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#)
-#install(FILES ${CMAKE_BINARY_DIR}/warframe.pc
-#  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR/pkgconfig
-#)
