@@ -39,8 +39,8 @@ void *SzAlloc(const ISzAlloc *p, size_t size) { p = p; return malloc(size); }
 void SzFree(const ISzAlloc *p, void *address) { p = p; free(address); }
 static ISzAlloc alloc = { SzAlloc, SzFree };
 
-void wf_get_pe_index() {
-  if (!is_wf_initialized()) return;
+bool wf_get_pe_index() {
+  if (!is_wf_initialized()) return false;
 
   curl_data *data = make_GET_Raw(wf_cfg.wf_pe_index_url, "");
 
@@ -54,8 +54,11 @@ void wf_get_pe_index() {
 
   if (res != SZ_OK) {
     PRINT_DEBUG("BAD RES VALUE LzmaDecode\n");
-    return;
+    free(decoded);
+    return false;
   }
+
+  printf("Decoded: %s\n", decoded);
 
   FILE *f = fmemopen(decoded, out_len, "r");
 
@@ -114,6 +117,8 @@ void wf_get_pe_index() {
   free(data);
   free(line);
   free(decoded);
+
+  return true;
 }
 
 bool wf_init(wf_config *config)
@@ -121,18 +126,23 @@ bool wf_init(wf_config *config)
   if (is_wf_initialized())
     return true;
 
-  PRINT_DEBUG("%s\n", "Hello");
-
   // Copy config in
   memcpy(&wf_cfg, config, sizeof(wf_config));
 
   bool res = network_init();
-  if (!res)
+  if (!res) {
+    PRINT_DEBUG("Error initializing network\n");
     return false;
-
-  wf_get_pe_index();
+  }
 
   wf_initialized = true;
+  
+  res = wf_get_pe_index();
+  if (!res) {
+    PRINT_DEBUG("Error initializing WF Endpoints\n");
+    wf_initialized = false;
+    return false;
+  }
 
   return true;
 }
