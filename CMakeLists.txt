@@ -23,6 +23,7 @@ add_library(${PROJECT_NAME} STATIC
   include/network.h
   include/worldstate.h
   include/debug.h
+  include/helpers.h
 )
 
 # Set version and public header
