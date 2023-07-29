@@ -53,7 +53,7 @@ bool wf_get_pe_index() {
     &status, &alloc);
 
   if (res != SZ_OK) {
-    PRINT_DEBUG("BAD RES VALUE LzmaDecode\n");
+    PRINT_WARN("Bad res value from LzmaDecode: %i\n", res);
     free(decoded);
     return false;
   }
@@ -106,8 +106,12 @@ bool wf_get_pe_index() {
       }
     }
 
-                 // Remove /r/n
-    strncpy(ref, strtok(strtok(line, "\r"), "\n"), read);
+    if (ref != NULL) {
+                  // Remove /r/n
+      strncpy(ref, strtok(strtok(line, "\r"), "\n"), read);
+    } else {
+      PRINT_INFO("Got unknown content type: %s\n", ctnt_type);
+    }
     free(tmp_str);
   }
 
@@ -131,7 +135,7 @@ bool wf_init(wf_config *config)
 
   bool res = network_init();
   if (!res) {
-    PRINT_DEBUG("Error initializing network\n");
+    PRINT_ERROR("WF init - error initializing network\n");
     return false;
   }
 
@@ -139,7 +143,7 @@ bool wf_init(wf_config *config)
   
   res = wf_get_pe_index();
   if (!res) {
-    PRINT_DEBUG("Error initializing WF Endpoints\n");
+    PRINT_ERROR("Error initializing WF Endpoints\n");
     wf_initialized = false;
     return false;
   }
@@ -150,13 +154,13 @@ bool wf_init(wf_config *config)
 void get_string(cJSON *data, unsigned char **ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
-    // Im hesitant to make NULL values print, as optional values will result in unwanted prints...
-    // PRINT_DEBUG("String parse error: '%s' is NULL\n", name);
+    // NULLs can happen with optional fields
+    PRINT_DEBUG("String parse error: '%s' is NULL (might be optional field)\n", name);
     *ref = NULL;
     return;
   }
   if (!cJSON_IsString(tmp)) {
-    PRINT_DEBUG("String parse error: '%s' is not a string type: %i!\n", name, tmp->type);
+    PRINT_WARN("String parse error: '%s' is not a string type: %i!\n", name, tmp->type);
     *ref = NULL;
     return;
   }
@@ -168,12 +172,12 @@ void get_string(cJSON *data, unsigned char **ref, char* name) {
 void get_number(cJSON *data, unsigned int *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
-    // PRINT_DEBUG("Number parse error: '%s' is NULL\n", name);
+    PRINT_DEBUG("Number parse error: '%s' is NULL (might be optional field)\n", name);
     *ref = 0;
     return;
   }
   if (!cJSON_IsNumber(tmp)) {
-    PRINT_DEBUG("Number parse error: '%s' is not a number type: %i!\n", name, tmp->type);
+    PRINT_WARN("Number parse error: '%s' is not a number type: %i!\n", name, tmp->type);
     *ref = 0;
     return;
   }
@@ -183,12 +187,12 @@ void get_number(cJSON *data, unsigned int *ref, char* name) {
 void get_boolean(cJSON *data, bool *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
-    // PRINT_DEBUG("Boolean parse error: '%s' is NULL\n", name);
+    PRINT_DEBUG("Boolean parse error: '%s' is NULL (might be optional field)\n", name);
     *ref = 0;
     return;
   }
   if (!cJSON_IsBool(tmp)) {
-    PRINT_DEBUG("Boolean parse error: '%s' is not a boolean type: %i!\n", name, tmp->type);
+    PRINT_WARN("Boolean parse error: '%s' is not a boolean type: %i!\n", name, tmp->type);
     *ref = 0;
     return;
   }
@@ -198,12 +202,12 @@ void get_boolean(cJSON *data, bool *ref, char* name) {
 void get_double(cJSON *data, double *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
-    // PRINT_DEBUG("Double parse error: '%s' is NULL\n", name);
+    PRINT_DEBUG("Double parse error: '%s' is NULL (might be optional field)\n", name);
     *ref = 0;
     return;
   }
   if (!cJSON_IsNumber(tmp)) {
-    PRINT_DEBUG("Double parse error: '%s' is not a double type: %i!\n", name, tmp->type);
+    PRINT_WARN("Double parse error: '%s' is not a double type: %i!\n", name, tmp->type);
     *ref = 0;
     return;
   }
@@ -216,7 +220,7 @@ worldstate *wf_get_worldstate() {
   cJSON *data = make_GET_JSON(wf_cfg.wf_ws_url, "");
 
   if (data == NULL) {
-    PRINT_DEBUG("Error getting world state\n");
+    PRINT_WARN("WF - Error getting world state JSON\n");
     return NULL;
   }
 
@@ -383,6 +387,11 @@ warframe_t *wf_get_warframes(int *num_wf_out) {
 
   cJSON *data = make_GET_JSON(wf_cfg.wf_pe_content_url, content_endpoints.Warframes);
 
+  if (data == NULL) {
+    PRINT_WARN("WF - Error getting warframe JSON\n");
+    return NULL;
+  }
+
   // ExportWarframes
   cJSON *export_warframes = cJSON_GetObjectItem(data, "ExportWarframes");
   int num_warframes = cJSON_GetArraySize(export_warframes);
@@ -436,18 +445,6 @@ warframe_t *wf_get_warframes(int *num_wf_out) {
 }
 
 void wf_free_warframes(warframe_t *warframes, int num_warframes) {
-  /**
-   * foreach (warframe) {   * 
-   *    foreach (warframe ability) {
-   *      free abilityUniqueName, abilityName, description
-   *    }
-   * 
-   *    free abilities
-   * }
-   * 
-   * free warframes
-  */
-
   warframe_t *wf;
   for (int i=0; i<num_warframes; i++) {
     wf = &warframes[i];

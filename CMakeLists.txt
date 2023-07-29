@@ -9,8 +9,8 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CMAKE_C_FLAGS "-Wall")
-set(CMAKE_C_FLAGS_DEBUG "-g -DWF_DEBUG")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_C_FLAGS_DEBUG "-g -DPRINT_LEVEL=DEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DPRINT_LEVEL=ERROR")
 
 # Create this project as a library
 add_library(${PROJECT_NAME} STATIC

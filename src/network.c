@@ -18,8 +18,10 @@ static size_t write_callback(char *data, size_t size, size_t nmemb, void *userda
   curl_data *mem = (curl_data *)userdata;
 
   unsigned char *ptr = realloc(mem->response, mem->size + realsize + 1);
-  if (ptr == NULL)
+  if (ptr == NULL) {
+    PRINT_WARN("Out of memory during request\n");
     return 0; // Out of memory
+  }
 
   mem->response = ptr;
   memcpy(&(mem->response[mem->size]), data, realsize);
@@ -37,8 +39,10 @@ bool network_init()
   }
 
   curl = curl_easy_init();
-  if (curl == NULL)
+  if (curl == NULL) {
+    PRINT_ERROR("Could not initialize CURL\n");
     return false;
+  }
 
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
@@ -78,7 +82,7 @@ curl_data *make_GET_Raw(char *url, char *endpoint) {
   CURLcode res = curl_easy_perform(curl);
 
   if (res != CURLE_OK) {
-    PRINT_DEBUG("Error making request: %i\n", res);
+    PRINT_WARN("Error making request: %i\n", res);
     free(chunk);
     return NULL;
   }
@@ -102,7 +106,7 @@ cJSON *make_GET_JSON(char *url, char *endpoint)
 
   curl_data *chunk = make_GET_Raw(url, endpoint);
   if (chunk == NULL) {
-    PRINT_DEBUG("Problem making JSON request\n");
+    PRINT_WARN("Problem making RAW request\n");
     return NULL;
   }
   if (chunk->response_code != 200) {
