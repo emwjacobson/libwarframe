@@ -1,6 +1,6 @@
 #include "network.h"
 #include "warframe.h"
-
+#include "debug.h"
 #include <stdint.h>
 #include <malloc.h>
 #include <stdio.h>

@@ -1,6 +1,7 @@
 #ifndef WARFRAME__H
 #define WARFRAME__H
 
+#include "wf_defs.h"
 #include <stdbool.h>
 #include "worldstate.h"
 
@@ -48,7 +49,7 @@ typedef struct wf_config
 bool wf_init(wf_config *config);
 worldstate *wf_get_worldstate();
 void wf_free_worldstate();
-void wf_get_warframes();
+warframe_t *wf_get_warframes(int *num_warframes);
 void wf_cleanup();
 
 #endif

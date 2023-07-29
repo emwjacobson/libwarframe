@@ -18,6 +18,7 @@ add_library(${PROJECT_NAME} STATIC
   src/wf.c
   src/network.c
 
+  include/wf_defs.h
   include/warframe.h
   include/network.h
   include/worldstate.h

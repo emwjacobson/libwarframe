@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 typedef struct worldstate {
-    char *WorldSeed;
-    int Version;
-    char *MobileVersion;
-    char *BuildLabel;
-    int Time;
+    unsigned char *WorldSeed;
+    unsigned int Version;
+    unsigned char *MobileVersion;
+    unsigned char *BuildLabel;
+    unsigned int Time;
 } worldstate;
 
 #endif

@@ -145,10 +145,17 @@ bool wf_init(wf_config *config)
   return true;
 }
 
-void get_string(cJSON *data, char **ref, char* name) {
+void get_string(cJSON *data, unsigned char **ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
+  if (tmp == NULL) {
+    // Im hesitant to make NULL values print, as optional values will result in unwanted prints...
+    // PRINT_DEBUG("String parse error: '%s' is NULL\n", name);
+    *ref = NULL;
+    return;
+  }
   if (!cJSON_IsString(tmp)) {
-    PRINT_DEBUG("Parse error: '%s' is not a string!\n", name);
+    PRINT_DEBUG("String parse error: '%s' is not a string type: %i!\n", name, tmp->type);
+    *ref = NULL;
     return;
   }
   int len = strlen(tmp->valuestring);
@@ -156,9 +163,49 @@ void get_string(cJSON *data, char **ref, char* name) {
   memcpy(*ref, tmp->valuestring, len + 1);
 }
 
-void get_number(cJSON *data, int *ref, char* name) {
+void get_number(cJSON *data, unsigned int *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
+  if (tmp == NULL) {
+    // PRINT_DEBUG("Number parse error: '%s' is NULL\n", name);
+    *ref = 0;
+    return;
+  }
+  if (!cJSON_IsNumber(tmp)) {
+    PRINT_DEBUG("Number parse error: '%s' is not a number type: %i!\n", name, tmp->type);
+    *ref = 0;
+    return;
+  }
   *ref = tmp->valueint;
+}
+
+void get_boolean(cJSON *data, bool *ref, char* name) {
+  cJSON *tmp = cJSON_GetObjectItem(data, name);
+  if (tmp == NULL) {
+    // PRINT_DEBUG("Boolean parse error: '%s' is NULL\n", name);
+    *ref = 0;
+    return;
+  }
+  if (!cJSON_IsBool(tmp)) {
+    PRINT_DEBUG("Boolean parse error: '%s' is not a boolean type: %i!\n", name, tmp->type);
+    *ref = 0;
+    return;
+  }
+  *ref = cJSON_IsTrue(tmp);
+}
+
+void get_double(cJSON *data, double *ref, char* name) {
+  cJSON *tmp = cJSON_GetObjectItem(data, name);
+  if (tmp == NULL) {
+    // PRINT_DEBUG("Double parse error: '%s' is NULL\n", name);
+    *ref = 0;
+    return;
+  }
+  if (!cJSON_IsNumber(tmp)) {
+    PRINT_DEBUG("Double parse error: '%s' is not a double type: %i!\n", name, tmp->type);
+    *ref = 0;
+    return;
+  }
+  *ref = tmp->valuedouble;
 }
 
 worldstate *wf_get_worldstate() {
@@ -329,17 +376,65 @@ void wf_free_worldstate(worldstate *ws) {
   free(ws);
 }
 
-void wf_get_warframes() {
-  if (!is_wf_initialized()) return;
+warframe_t *wf_get_warframes(int *num_wf_out) {
+  if (!is_wf_initialized()) return NULL;
 
   cJSON *data = make_GET_JSON(wf_cfg.wf_pe_content_url, content_endpoints.Warframes);
 
-  char *string = cJSON_Print(data);
+  // ExportWarframes
+  cJSON *export_warframes = cJSON_GetObjectItem(data, "ExportWarframes");
+  int num_warframes = cJSON_GetArraySize(export_warframes);
+  warframe_t *warframes = malloc(num_warframes * sizeof(warframe_t));
 
-  // TODO: Do something with the data :)
+  int i = 0;
+  cJSON *wf_json;
+  cJSON_ArrayForEach(wf_json, export_warframes) {
+    warframe_t *wf = &(warframes[i]);
+    get_string(wf_json, &(wf->uniqueName), "uniqueName");
+    get_string(wf_json, &(wf->name), "name");
+    get_string(wf_json, &(wf->parentName), "parentName");
+    get_string(wf_json, &(wf->description), "description");
+    get_number(wf_json, &(wf->health), "health");
+    get_number(wf_json, &(wf->shield), "shield");
+    get_number(wf_json, &(wf->armor), "armor");
+    get_number(wf_json, &(wf->stamina), "stamina");
+    get_number(wf_json, &(wf->power), "power");
+    get_boolean(wf_json, &(wf->codexSecret), "codexSecret");
+    get_number(wf_json, &(wf->masteryReq), "masteryReq");
+    get_double(wf_json, &(wf->sprintSpeed), "sprintSpeed");
+    get_string(wf_json, &(wf->productCategory), "productCategory");
 
-  free(string);
+    // "Optional" item, might be NULL.
+    get_string(wf_json, &(wf->passiveDescription), "passiveDescription");
+
+    cJSON *abilities = cJSON_GetObjectItem(wf_json, "abilities");
+    wf->numAbilities = cJSON_GetArraySize(abilities);
+    wf->abilities = malloc(wf->numAbilities * sizeof(ability_t));
+
+    cJSON *ability_json;
+    int j = 0;
+    cJSON_ArrayForEach(ability_json, abilities) {
+      get_string(ability_json, &(wf->abilities[j].abilityUniqueName), "abilityUniqueName");
+      get_string(ability_json, &(wf->abilities[j].abilityName), "abilityName");
+      get_string(ability_json, &(wf->abilities[j].description), "description");
+
+      j++;
+    }
+
+    i++;
+  }
+
+  // TODO: ExportAbilities
+
   cJSON_Delete(data);
+
+  // Only set at end. Early returns might modify `num_wf_out` but return NULL.
+  *num_wf_out = num_warframes;
+  return warframes;
+}
+
+void wf_free_warframed(warframe_t *warframes, int num_warframes) {
+  // TODO
 }
 
 void wf_cleanup()
