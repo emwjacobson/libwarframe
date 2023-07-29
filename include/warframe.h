@@ -50,6 +50,7 @@ bool wf_init(wf_config *config);
 worldstate *wf_get_worldstate();
 void wf_free_worldstate();
 warframe_t *wf_get_warframes(int *num_warframes);
+void wf_free_warframes(warframe_t *warframes, int num_warframes);
 void wf_cleanup();
 
 #endif

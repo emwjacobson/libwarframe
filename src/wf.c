@@ -111,6 +111,8 @@ bool wf_get_pe_index() {
     free(tmp_str);
   }
 
+  fclose(f);
+
   free(data->response);
   free(data);
   free(line);
@@ -433,8 +435,43 @@ warframe_t *wf_get_warframes(int *num_wf_out) {
   return warframes;
 }
 
-void wf_free_warframed(warframe_t *warframes, int num_warframes) {
-  // TODO
+void wf_free_warframes(warframe_t *warframes, int num_warframes) {
+  /**
+   * foreach (warframe) {   * 
+   *    foreach (warframe ability) {
+   *      free abilityUniqueName, abilityName, description
+   *    }
+   * 
+   *    free abilities
+   * }
+   * 
+   * free warframes
+  */
+
+  warframe_t *wf;
+  for (int i=0; i<num_warframes; i++) {
+    wf = &warframes[i];
+
+    free(wf->uniqueName);
+    free(wf->name);
+    free(wf->parentName);
+    free(wf->description);
+    free(wf->passiveDescription);
+    free(wf->productCategory);
+
+    ability_t *ab;
+    for (int j=0; j<wf->numAbilities; j++) {
+      ab = &(wf->abilities[j]);
+
+      free(ab->abilityUniqueName);
+      free(ab->abilityName);
+      free(ab->description);
+    }
+
+    free(wf->abilities);
+  }
+
+  free(warframes);
 }
 
 void wf_cleanup()
