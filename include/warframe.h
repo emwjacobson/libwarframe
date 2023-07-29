@@ -41,7 +41,7 @@ typedef struct wf_config
 #define WF_DEFAULT_CONFIG                                                            \
   {                                                                                  \
     .wf_ws_url = "https://content.warframe.com/dynamic/worldState.php",              \
-    .wf_dt_url = "https://warframe.com/droptables/",                                 \
+    .wf_dt_url = "https://warframe.com/droptables",                                 \
     .wf_pe_index_url = "https://origin.warframe.com/PublicExport/index_en.txt.lzma", \
     .wf_pe_content_url = "https://content.warframe.com/PublicExport/Manifest/"       \
   }
@@ -51,6 +51,8 @@ worldstate *wf_get_worldstate();
 void wf_free_worldstate();
 warframe_t *wf_get_warframes(int *num_warframes);
 void wf_free_warframes(warframe_t *warframes, int num_warframes);
+void wf_get_droptable();
+void wf_free_droptable();
 void wf_cleanup();
 
 #endif

@@ -45,6 +45,10 @@ bool network_init()
   }
 
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+  curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+  
+  // Should POST requests be converted to GET on redirect?
+  // curl_easy_setopt(curl, CURLOPT_POSTREDIR, ???)
 
   network_initialized = true;
   references = 1;

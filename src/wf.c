@@ -407,6 +407,19 @@ void wf_free_warframes(warframe_t *warframes, int num_warframes) {
   free(warframes);
 }
 
+void wf_get_droptable() {
+  curl_data *data = make_GET_Raw(wf_cfg.wf_dt_url, "");
+
+  printf("Response Code: %li\nSize: %li\n", data->response_code, data->size);
+
+  free(data->response);
+  free(data);
+}
+
+void wf_free_droptable() {
+
+}
+
 void wf_cleanup()
 {
   if (!is_wf_initialized()) return;
