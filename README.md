@@ -20,8 +20,8 @@ More information to come once I flesh the project out more :)
      - https://lexbor.com/docs/lexbor/html/
    - [ ] https://warframe.fandom.com/wiki/Public_Export
      - https://github.com/lloyd/easylzma
- - [X] Debug-only print statements
- - [X] Multiple levels of print statements - ERROR, WARN, INFO, DEBUG, TRACE. Print to stderr?
  - [ ] Better return values on errors
  - [ ] Move cJSON get_[string, number, boolean, double] to own header/source
+ - [X] Debug-only print statements
+ - [X] Multiple levels of print statements - ERROR, WARN, INFO, DEBUG, TRACE. Print to stderr?
  - [X] Static Libraries

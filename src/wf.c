@@ -236,138 +236,136 @@ worldstate *wf_get_worldstate() {
   get_number(data, &(ws->Time), "Time");
   // TODO: "Tmp" variable?
 
-  // TODO: Finish parsing JSON
-
   /**
-   * Events
+   * TODO: Events
    */
 
   /**
-   * Goals
+   * TODO: Goals
    */
 
   /**
-   * Alerts
+   * TODO: Alerts
    */
 
   /**
-   * Sorties
+   * TODO: Sorties
    */
 
   /**
-   * LiteSorties
+   * TODO: LiteSorties
    */
 
   /**
-   * SyndicateMissions
+   * TODO: SyndicateMissions
    */
 
   /**
-   * ActiveMissions
+   * TODO: ActiveMissions
    */
 
   /**
-   * GlobalUpgrades
+   * TODO: GlobalUpgrades
    */
 
   /**
-   * FlashSales
+   * TODO: FlashSales
    */
   
   /**
-   * InGameMarket
+   * TODO: InGameMarket
    */
 
   /**
-   * Invasions
+   * TODO: Invasions
    */
 
   /**
-   * HubEvents
+   * TODO: HubEvents
    */
 
   /**
-   * NodeOverrides
+   * TODO: NodeOverrides
    */
 
   /**
-   * VoidTraders
+   * TODO: VoidTraders
    */
 
   /**
-   * PrimeVaultTraders
+   * TODO: PrimeVaultTraders
    */
 
   /**
-   * VoidStorms
+   * TODO: VoidStorms
    */
 
   /**
-   * PrimeAccessAvailability
+   * TODO: PrimeAccessAvailability
    */
 
   /**
-   * PrimeVaultAvailabilities
+   * TODO: PrimeVaultAvailabilities
    */
 
   /**
-   * PrimeTokenAvailability
+   * TODO: PrimeTokenAvailability
    */
 
   /**
-   * DailyDeals
+   * TODO: DailyDeals
    */
 
   /**
-   * LibraryInfo
+   * TODO: LibraryInfo
    */
 
   /**
-   * PVPChallengeInstances
+   * TODO: PVPChallengeInstances
    */
 
   /**
-   * PersistentEnemies
+   * TODO: PersistentEnemies
    */
 
   /**
-   * PVPAlternativeModes
+   * TODO: PVPAlternativeModes
    */
 
   /**
-   * PVPActiveTournaments
+   * TODO: PVPActiveTournaments
    */
 
   /**
-   * ProjectPct
+   * TODO: ProjectPct
    */
 
   /**
-   * ConstructionProjects
+   * TODO: ConstructionProjects
    */
 
   /**
-   * TwitchPromos
+   * TODO: TwitchPromos
    */
 
   /**
-   * ExperimentRecommended
+   * TODO: ExperimentRecommended
    */
 
   /**
-   * EndlessXpChoices
+   * TODO: EndlessXpChoices
    */
 
   /**
-   * ForceLogoutVersion
+   * TODO: ForceLogoutVersion
    */
 
   /**
-   * FeaturedGuilds
+   * TODO: FeaturedGuilds
    */
 
   /**
-   * SeasonInfo
+   * TODO: SeasonInfo
    */
 
 
