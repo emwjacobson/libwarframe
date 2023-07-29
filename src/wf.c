@@ -12,7 +12,7 @@ static bool wf_initialized = false;
 wf_config wf_cfg = {0};
 
 // Export URLs
-typedef struct wf_content {
+typedef struct wf_content_t {
   char Customs[ENDPOINT_MAX_LENGTH];
   char Drones[ENDPOINT_MAX_LENGTH];
   char Flavour[ENDPOINT_MAX_LENGTH];
@@ -29,8 +29,8 @@ typedef struct wf_content {
   char Warframes[ENDPOINT_MAX_LENGTH];
   char Weapons[ENDPOINT_MAX_LENGTH];
   char Manifest[ENDPOINT_MAX_LENGTH];
-} wf_content;
-static wf_content content_endpoints = {0};
+} wf_content_t;
+static wf_content_t content_endpoints = {0};
 
 bool is_wf_initialized() {
   return wf_initialized;
@@ -108,7 +108,7 @@ bool wf_get_pe_index() {
     }
 
     if (ref != NULL) {
-                  // Remove /r/n
+                            // Remove /r/n
       strncpy(ref, strtok(strtok(line, "\r"), "\n"), read);
     } else {
       PRINT_INFO("Got unknown content type: %s\n", ctnt_type);

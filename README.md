@@ -21,7 +21,7 @@ More information to come once I flesh the project out more :)
    - [ ] https://warframe.fandom.com/wiki/Public_Export
      - https://github.com/lloyd/easylzma
  - [ ] Better return values on errors
- - [ ] Move cJSON get_[string, number, boolean, double] to own header/source
+ - [X] Move cJSON get_[string, number, boolean, double] to own header/source
  - [X] Debug-only print statements
  - [X] Multiple levels of print statements - ERROR, WARN, INFO, DEBUG, TRACE. Print to stderr?
  - [X] Static Libraries
