@@ -8,6 +8,8 @@ project(lzma
 add_library(${PROJECT_NAME} STATIC
     LzmaDec.h
     7zTypes.h
+    Precomp.h
+    Compiler.h
 
     LzmaDec.c
 )
