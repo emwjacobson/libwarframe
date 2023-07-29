@@ -151,7 +151,7 @@ bool wf_init(wf_config *config)
   return true;
 }
 
-void get_string(cJSON *data, unsigned char **ref, char* name) {
+void json_get_string(cJSON *data, unsigned char **ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
     // NULLs can happen with optional fields
@@ -169,7 +169,7 @@ void get_string(cJSON *data, unsigned char **ref, char* name) {
   memcpy(*ref, tmp->valuestring, len + 1);
 }
 
-void get_number(cJSON *data, unsigned int *ref, char* name) {
+void json_get_number(cJSON *data, unsigned int *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
     PRINT_DEBUG("Number parse error: '%s' is NULL (might be optional field)\n", name);
@@ -184,7 +184,7 @@ void get_number(cJSON *data, unsigned int *ref, char* name) {
   *ref = tmp->valueint;
 }
 
-void get_boolean(cJSON *data, bool *ref, char* name) {
+void json_get_boolean(cJSON *data, bool *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
     PRINT_DEBUG("Boolean parse error: '%s' is NULL (might be optional field)\n", name);
@@ -199,7 +199,7 @@ void get_boolean(cJSON *data, bool *ref, char* name) {
   *ref = cJSON_IsTrue(tmp);
 }
 
-void get_double(cJSON *data, double *ref, char* name) {
+void json_get_double(cJSON *data, double *ref, char* name) {
   cJSON *tmp = cJSON_GetObjectItem(data, name);
   if (tmp == NULL) {
     PRINT_DEBUG("Double parse error: '%s' is NULL (might be optional field)\n", name);
@@ -229,11 +229,11 @@ worldstate *wf_get_worldstate() {
   /**
    * Basic Data
    */
-  get_string(data, &(ws->WorldSeed), "WorldSeed");
-  get_number(data, &(ws->Version), "Version");
-  get_string(data, &(ws->MobileVersion), "MobileVersion");
-  get_string(data, &(ws->BuildLabel), "BuildLabel");
-  get_number(data, &(ws->Time), "Time");
+  json_get_string(data, &(ws->WorldSeed), "WorldSeed");
+  json_get_number(data, &(ws->Version), "Version");
+  json_get_string(data, &(ws->MobileVersion), "MobileVersion");
+  json_get_string(data, &(ws->BuildLabel), "BuildLabel");
+  json_get_number(data, &(ws->Time), "Time");
   // TODO: "Tmp" variable?
 
   /**
@@ -399,22 +399,22 @@ warframe_t *wf_get_warframes(int *num_wf_out) {
   cJSON *wf_json;
   cJSON_ArrayForEach(wf_json, export_warframes) {
     warframe_t *wf = &(warframes[i]);
-    get_string(wf_json, &(wf->uniqueName), "uniqueName");
-    get_string(wf_json, &(wf->name), "name");
-    get_string(wf_json, &(wf->parentName), "parentName");
-    get_string(wf_json, &(wf->description), "description");
-    get_number(wf_json, &(wf->health), "health");
-    get_number(wf_json, &(wf->shield), "shield");
-    get_number(wf_json, &(wf->armor), "armor");
-    get_number(wf_json, &(wf->stamina), "stamina");
-    get_number(wf_json, &(wf->power), "power");
-    get_boolean(wf_json, &(wf->codexSecret), "codexSecret");
-    get_number(wf_json, &(wf->masteryReq), "masteryReq");
-    get_double(wf_json, &(wf->sprintSpeed), "sprintSpeed");
-    get_string(wf_json, &(wf->productCategory), "productCategory");
+    json_get_string(wf_json, &(wf->uniqueName), "uniqueName");
+    json_get_string(wf_json, &(wf->name), "name");
+    json_get_string(wf_json, &(wf->parentName), "parentName");
+    json_get_string(wf_json, &(wf->description), "description");
+    json_get_number(wf_json, &(wf->health), "health");
+    json_get_number(wf_json, &(wf->shield), "shield");
+    json_get_number(wf_json, &(wf->armor), "armor");
+    json_get_number(wf_json, &(wf->stamina), "stamina");
+    json_get_number(wf_json, &(wf->power), "power");
+    json_get_boolean(wf_json, &(wf->codexSecret), "codexSecret");
+    json_get_number(wf_json, &(wf->masteryReq), "masteryReq");
+    json_get_double(wf_json, &(wf->sprintSpeed), "sprintSpeed");
+    json_get_string(wf_json, &(wf->productCategory), "productCategory");
 
     // "Optional" item, might be NULL.
-    get_string(wf_json, &(wf->passiveDescription), "passiveDescription");
+    json_get_string(wf_json, &(wf->passiveDescription), "passiveDescription");
 
     cJSON *abilities = cJSON_GetObjectItem(wf_json, "abilities");
     wf->numAbilities = cJSON_GetArraySize(abilities);
@@ -423,9 +423,9 @@ warframe_t *wf_get_warframes(int *num_wf_out) {
     cJSON *ability_json;
     int j = 0;
     cJSON_ArrayForEach(ability_json, abilities) {
-      get_string(ability_json, &(wf->abilities[j].abilityUniqueName), "abilityUniqueName");
-      get_string(ability_json, &(wf->abilities[j].abilityName), "abilityName");
-      get_string(ability_json, &(wf->abilities[j].description), "description");
+      json_get_string(ability_json, &(wf->abilities[j].abilityUniqueName), "abilityUniqueName");
+      json_get_string(ability_json, &(wf->abilities[j].abilityName), "abilityName");
+      json_get_string(ability_json, &(wf->abilities[j].description), "description");
 
       j++;
     }
